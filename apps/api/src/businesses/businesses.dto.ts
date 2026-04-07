@@ -1,5 +1,16 @@
-import { IsString, IsOptional, IsUrl } from 'class-validator';
+import { IsString, IsOptional, IsUrl, ValidateNested, IsNumber } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
+export class BusinessLocationDto {
+  @ApiProperty()
+  @IsNumber()
+  latitude: number;
+
+  @ApiProperty()
+  @IsNumber()
+  longitude: number;
+}
 
 export class CreateBusinessDto {
   @ApiProperty()
@@ -27,6 +38,12 @@ export class CreateBusinessDto {
   @IsUrl()
   @IsOptional()
   logoUrl?: string;
+
+  @ApiPropertyOptional({ type: BusinessLocationDto })
+  @ValidateNested()
+  @Type(() => BusinessLocationDto)
+  @IsOptional()
+  location?: BusinessLocationDto;
 }
 
 export class AssignInfluencerDto {

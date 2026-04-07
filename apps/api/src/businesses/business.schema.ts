@@ -30,6 +30,12 @@ export class Business {
   @Prop()
   logoUrl?: string;
 
+  @Prop({
+    type: { latitude: Number, longitude: Number },
+    _id: false,
+  })
+  location?: { latitude: number; longitude: number };
+
   @Prop({ enum: BusinessStatus, default: BusinessStatus.PENDING })
   status: BusinessStatus;
 
