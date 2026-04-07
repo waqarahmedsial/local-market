@@ -135,6 +135,7 @@ export enum ItemImportSource {
   EXCEL = 'EXCEL',
   IMAGE = 'IMAGE',
   VOICE = 'VOICE',
+  AI_TEXT = 'AI_TEXT',
 }
 
 export interface Item {

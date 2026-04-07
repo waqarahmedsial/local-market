@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -13,6 +14,7 @@ import {
 } from './canonical.schema';
 import { CanonicalStatus, VariationStatus } from '@local-market/shared';
 import { getPaginationOptions, paginate } from '../common/pagination.helper';
+import { sanitizeSearchQuery, isValidObjectId } from '../common/sanitize.helper';
 
 @Injectable()
 export class CanonicalService {
@@ -50,8 +52,16 @@ export class CanonicalService {
     const { skip, limit, page } = getPaginationOptions(params);
     const filter: Record<string, unknown> = {};
     if (params.status) filter['status'] = params.status;
-    if (params.categoryId) filter['categoryId'] = new Types.ObjectId(params.categoryId);
-    if (params.search) filter['$text'] = { $search: params.search };
+    if (params.categoryId) {
+      if (!isValidObjectId(params.categoryId)) {
+        throw new BadRequestException('Invalid categoryId');
+      }
+      filter['categoryId'] = new Types.ObjectId(params.categoryId);
+    }
+    if (params.search) {
+      const safeSearch = sanitizeSearchQuery(params.search);
+      if (safeSearch) filter['$text'] = { $search: safeSearch };
+    }
 
     const [data, total] = await Promise.all([
       this.canonicalModel

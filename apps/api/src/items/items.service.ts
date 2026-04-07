@@ -78,7 +78,7 @@ export class ItemsService {
           rawName: preview.rawInput,
           price: preview.price ?? 0,
           unit: preview.unit,
-          importSource: ItemImportSource.EXCEL,
+          importSource: ItemImportSource.AI_TEXT,
         },
         user,
       );

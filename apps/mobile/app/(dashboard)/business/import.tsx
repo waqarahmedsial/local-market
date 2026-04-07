@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -21,11 +21,11 @@ export default function ImportScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Load business ID on mount
-  useState(() => {
+  useEffect(() => {
     apiClient.businesses.myBusiness()
       .then((b) => setBusinessId(b._id))
       .catch(() => {});
-  });
+  }, []);
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
@@ -110,7 +110,7 @@ export default function ImportScreen() {
                 <View className="flex-row justify-between items-start">
                   <View className="flex-1">
                     <Text className="font-medium text-gray-900">{item.suggestedName}</Text>
-                    <Text className="text-xs text-gray-400">Original: &quot;{item.rawInput}&quot;</Text>
+                    <Text className="text-xs text-gray-400">Original: "{item.rawInput}"</Text>
                     {item.suggestedCategory && (
                       <Text className="text-xs text-gray-400">Category: {item.suggestedCategory}</Text>
                     )}

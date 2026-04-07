@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { NormalizeTextResponse, AiImportPreview, AiImportResponse } from '@local-market/shared';
+import { isSafeExternalUrl } from '../common/sanitize.helper';
 
 @Injectable()
 export class AiService {
@@ -132,6 +133,11 @@ If price/unit not found, omit those fields.`,
       return { items: [] };
     }
 
+    // Validate URL to prevent SSRF
+    if (!isSafeExternalUrl(imageUrl)) {
+      throw new BadRequestException('Invalid image URL');
+    }
+
     try {
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4o',
@@ -183,6 +189,11 @@ Return JSON:
   async importFromVoice(audioUrl: string): Promise<AiImportResponse> {
     if (!this.config.get('OPENAI_API_KEY')) {
       return { items: [] };
+    }
+
+    // Validate URL to prevent SSRF
+    if (!isSafeExternalUrl(audioUrl)) {
+      throw new BadRequestException('Invalid audio URL');
     }
 
     try {

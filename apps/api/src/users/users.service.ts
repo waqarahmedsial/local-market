@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
@@ -38,7 +38,14 @@ export class UsersService {
   }
 
   async update(id: string, dto: Partial<User>): Promise<UserDocument> {
-    const user = await this.userModel.findByIdAndUpdate(id, dto, { new: true }).exec();
+    // Strip any keys starting with '$' to prevent MongoDB operator injection
+    const safeDto = Object.fromEntries(
+      Object.entries(dto).filter(([key]) => !key.startsWith('$')),
+    );
+    if (Object.keys(safeDto).length === 0) {
+      throw new BadRequestException('No valid fields to update');
+    }
+    const user = await this.userModel.findByIdAndUpdate(id, { $set: safeDto }, { new: true }).exec();
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
