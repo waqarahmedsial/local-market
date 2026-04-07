@@ -1,15 +1,20 @@
 import { json, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import axios from "axios";
-import { setSessionCookieHeader, getSessionTokens } from "~/lib/session.server";
+import { setSessionCookieHeader } from "~/lib/session.server";
+import { requireUser } from "~/lib/auth.server";
 import type { AuthResponse } from "@local-market/shared";
 
 const API_BASE = process.env.API_URL ?? "http://localhost:3001/api/v1";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { accessToken } = await getSessionTokens(request);
-  if (accessToken) throw redirect("/dashboard");
-  return json({});
+  try {
+    await requireUser(request);
+    throw redirect("/dashboard");
+  } catch (err) {
+    if (err instanceof Response) throw err;
+    return json({});
+  }
 }
 
 export async function action({ request }: ActionFunctionArgs) {
