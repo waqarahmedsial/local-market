@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import globalStyles from "~/styles/globals.css?url";
 
 export const links: LinksFunction = () => [
+  { rel: "icon", href: "/favicon.ico", type: "image/svg+xml" },
   { rel: "stylesheet", href: globalStyles },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -28,11 +29,11 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Local Market — Village Marketplace</title>
+        <title>Majra Marketplace — Village Marketplace</title>
         <Meta />
         <Links />
       </head>
-      <body className="h-full font-sans">
+      <body className="h-full font-sans" suppressHydrationWarning>
         <Outlet />
         <ScrollRestoration />
         <script
