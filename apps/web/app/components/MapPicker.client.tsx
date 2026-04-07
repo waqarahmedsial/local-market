@@ -58,7 +58,7 @@ export default function MapPicker({ value, onChange }: MapPickerProps) {
     <MapContainer
       center={[value.lat, value.lng]}
       zoom={14}
-      style={{ height: "300px", width: "100%", borderRadius: "0.5rem" }}
+      style={{ height: "300px", width: "100%" }}
       className="z-0"
     >
       <TileLayer

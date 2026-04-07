@@ -80,16 +80,22 @@ export default function BusinessProfilePage() {
   const [location, setLocation] = useState<LatLng | null>(null);
   const [locationError, setLocationError] = useState(false);
 
+  const [locationNote, setLocationNote] = useState<string | null>(null);
+
   // Try to get the user's current position as the default pin
   useEffect(() => {
     if (typeof navigator !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => setLocation(DEFAULT_LOCATION),
+        () => {
+          setLocation(DEFAULT_LOCATION);
+          setLocationNote("Couldn't detect your location — defaulting to Lahore. Drag the pin to your actual location.");
+        },
         { timeout: 5000 },
       );
     } else {
       setLocation(DEFAULT_LOCATION);
+      setLocationNote("Geolocation is not available — defaulting to Lahore. Drag the pin to your actual location.");
     }
   }, []);
 
@@ -226,6 +232,9 @@ export default function BusinessProfilePage() {
                 <p className="text-xs text-gray-400 mt-1">
                   📍 {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
                 </p>
+                {locationNote && (
+                  <p className="text-xs text-amber-600 mt-1">{locationNote}</p>
+                )}
               </Suspense>
             ) : (
               <div className="h-[300px] rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
