@@ -30,7 +30,13 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Local Market to access your location to pin your business on the map."
+        }
+      ]
     ],
     "scheme": "localmarket",
     "experiments": {

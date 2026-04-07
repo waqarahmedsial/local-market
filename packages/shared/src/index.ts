@@ -48,6 +48,11 @@ export enum BusinessStatus {
   SUSPENDED = 'SUSPENDED',
 }
 
+export interface BusinessLocation {
+  latitude: number;
+  longitude: number;
+}
+
 export interface Business {
   _id: string;
   ownerId: string;
@@ -60,6 +65,7 @@ export interface Business {
   city: string;
   phone: string;
   logoUrl?: string;
+  location?: BusinessLocation;
   status: BusinessStatus;
   createdAt: string;
   updatedAt: string;
@@ -72,6 +78,7 @@ export interface CreateBusinessDto {
   city: string;
   phone: string;
   logoUrl?: string;
+  location?: BusinessLocation;
 }
 
 // ─── Canonical Naming Layer ───────────────────────────────────────────────────
