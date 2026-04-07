@@ -21,6 +21,9 @@ import type {
   PaginatedResponse,
   AuditLog,
   User,
+  CropBuyRequest,
+  CreateCropBuyRequestDto,
+  CropBuyRequestStatus,
 } from '@local-market/shared';
 
 // ─── Token Storage Abstraction ────────────────────────────────────────────────
@@ -391,6 +394,46 @@ export class ApiClient {
         params,
       });
       return data.data!;
+    },
+  };
+
+  // ── Crop Buy Requests ─────────────────────────────────────────────────────
+
+  readonly cropBuyRequests = {
+    create: async (dto: CreateCropBuyRequestDto): Promise<CropBuyRequest> => {
+      const { data } = await this.http.post<ApiResponse<CropBuyRequest>>('/crop-requests', dto);
+      return data.data!;
+    },
+
+    list: async (params?: {
+      city?: string;
+      cropName?: string;
+      status?: CropBuyRequestStatus;
+      page?: number;
+      limit?: number;
+    }): Promise<PaginatedResponse<CropBuyRequest>> => {
+      const { data } = await this.http.get<ApiResponse<PaginatedResponse<CropBuyRequest>>>(
+        '/crop-requests',
+        { params },
+      );
+      return data.data!;
+    },
+
+    getById: async (id: string): Promise<CropBuyRequest> => {
+      const { data } = await this.http.get<ApiResponse<CropBuyRequest>>(`/crop-requests/${id}`);
+      return data.data!;
+    },
+
+    updateStatus: async (id: string, status: CropBuyRequestStatus): Promise<CropBuyRequest> => {
+      const { data } = await this.http.patch<ApiResponse<CropBuyRequest>>(
+        `/crop-requests/${id}/status`,
+        { status },
+      );
+      return data.data!;
+    },
+
+    delete: async (id: string): Promise<void> => {
+      await this.http.delete(`/crop-requests/${id}`);
     },
   };
 }

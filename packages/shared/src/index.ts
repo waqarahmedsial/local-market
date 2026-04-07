@@ -249,6 +249,40 @@ export interface ApiResponse<T = unknown> {
   error?: string;
 }
 
+// ─── Agricultural / Crop Buy Requests ────────────────────────────────────────
+
+export enum CropBuyRequestStatus {
+  OPEN = 'OPEN',
+  FULFILLED = 'FULFILLED',
+  CANCELLED = 'CANCELLED',
+}
+
+export interface CropBuyRequest {
+  _id: string;
+  cropName: string;
+  quantity: number;
+  unit: string;
+  maxPricePerUnit?: number;
+  city: string;
+  description?: string;
+  contactName: string;
+  contactPhone: string;
+  status: CropBuyRequestStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCropBuyRequestDto {
+  cropName: string;
+  quantity: number;
+  unit: string;
+  maxPricePerUnit?: number;
+  city: string;
+  description?: string;
+  contactName: string;
+  contactPhone: string;
+}
+
 // ─── Audit ────────────────────────────────────────────────────────────────────
 
 export enum AuditAction {
