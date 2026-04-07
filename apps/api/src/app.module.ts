@@ -12,6 +12,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { AiModule } from './ai/ai.module';
 import { SearchModule } from './search/search.module';
 import { AuditModule } from './audit/audit.module';
+import { CropBuyRequestsModule } from './crop-buy-requests/crop-buy-requests.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AuditModule } from './audit/audit.module';
     AiModule,
     SearchModule,
     AuditModule,
+    CropBuyRequestsModule,
   ],
 })
 export class AppModule {}

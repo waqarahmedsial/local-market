@@ -56,14 +56,20 @@ export default function HomePage() {
       {/* Hero */}
       <section className="mx-auto max-w-4xl px-4 py-16 text-center">
         <h1 className="text-5xl font-bold text-gray-900 mb-4">
-          Your Village Market,<br />
-          <span className="text-brand-600">Now Online</span>
+          Buy &amp; Sell Agricultural<br />
+          <span className="text-brand-600">Products Online</span>
         </h1>
-        <p className="text-xl text-gray-500 mb-10">
-          Search in any language — Urdu, Hindi, Roman Urdu, or English.
+        <p className="text-xl text-gray-500 mb-4">
+          From seeds to harvested crops — all in one marketplace.
           <br />
-          <em className="text-brand-600">"allu"</em> → finds <strong>Potato</strong> near you.
+          Search in any language:{" "}
+          <em className="text-brand-600">&ldquo;allu&rdquo;</em> → finds <strong>Potato</strong> near you.
         </p>
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          <Link to="/crop-requests" className="btn-secondary text-sm">
+            🌾 Browse Crop Buy Requests
+          </Link>
+        </div>
 
         {/* Search bar */}
         <Form method="get" className="flex gap-2 max-w-xl mx-auto">
@@ -109,23 +115,47 @@ export default function HomePage() {
 
       {/* Features */}
       {!searchResult && (
-        <section className="mx-auto max-w-4xl px-4 pb-20">
+        <section className="mx-auto max-w-4xl px-4 pb-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FeatureCard
+              icon="🌾"
+              title="Sell Agricultural Products"
+              desc="List seeds, fertilizers, crops, and produce. Reach buyers across cities with AI-powered listings."
+            />
+            <FeatureCard
+              icon="🛒"
+              title="Buy Crops Directly"
+              desc="Post buying requests for wheat, rice, cotton, vegetables and more. Farmers contact you directly."
+            />
+            <FeatureCard
               icon="🧠"
-              title="AI-Powered Search"
-              desc="Search in any language. Our AI understands Urdu, Hindi, Roman Urdu, and misspellings."
+              title="Multi-language Search"
+              desc='Search in any language. "allu", "آلو", "tomato", "gosht" — our AI understands them all.'
             />
-            <FeatureCard
-              icon="✅"
-              title="Influencer Verified"
-              desc="Every seller is curated by local influencers. No fake listings, only trusted businesses."
-            />
-            <FeatureCard
-              icon="📦"
-              title="Smart Inventory"
-              desc="Sellers add products via voice, images, or text. AI handles the rest."
-            />
+          </div>
+        </section>
+      )}
+
+      {/* Agricultural Marketplace Banner */}
+      {!searchResult && (
+        <section className="mx-auto max-w-4xl px-4 pb-20">
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
+            <div className="text-4xl mb-3">🌾</div>
+            <h2 className="text-2xl font-bold text-green-900 mb-2">
+              Agricultural Marketplace
+            </h2>
+            <p className="text-green-700 mb-6 max-w-lg mx-auto">
+              From seed selling to crop buying — everything your farm needs in one place.
+              Connect farmers, wholesalers, and buyers across Pakistan.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link to="/crop-requests" className="btn-primary bg-green-600 hover:bg-green-700 border-green-600">
+                🌾 Browse Crop Buy Requests
+              </Link>
+              <Link to="/register" className="btn-secondary border-green-600 text-green-700 hover:bg-green-100">
+                🏪 Register as a Seller
+              </Link>
+            </div>
           </div>
         </section>
       )}
