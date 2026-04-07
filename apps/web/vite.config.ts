@@ -15,4 +15,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  ssr: {
+    noExternal: ["react-leaflet", "@react-leaflet/core"],
+  },
 });
