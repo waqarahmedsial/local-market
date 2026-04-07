@@ -76,8 +76,8 @@ export class BusinessesController {
   // Approve (admin or influencer)
   @Patch(':id/approve')
   @Roles(UserRole.ADMIN, UserRole.INFLUENCER)
-  async approve(@Param('id') id: string) {
-    const business = await this.businessesService.approve(id);
+  async approve(@Param('id') id: string, @CurrentUser() user: UserDocument) {
+    const business = await this.businessesService.approve(id, user);
     return ok(business, 'Business approved');
   }
 

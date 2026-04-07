@@ -83,12 +83,15 @@ export class BusinessesService {
     return business.save();
   }
 
-  async approve(id: string): Promise<BusinessDocument> {
+  async approve(id: string, user?: UserDocument): Promise<BusinessDocument> {
     const business = await this.findById(id);
     if (business.status === BusinessStatus.APPROVED) {
       throw new BadRequestException('Business is already approved');
     }
     business.status = BusinessStatus.APPROVED;
+    if (user && user.role === UserRole.INFLUENCER && !business.influencerId) {
+      business.influencerId = (user as any)._id;
+    }
     return business.save();
   }
 
