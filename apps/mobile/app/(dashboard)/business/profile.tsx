@@ -65,11 +65,11 @@ export default function BusinessProfileScreen() {
           });
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        // No business yet — auto-detect location for the registration form
+        detectLocation();
+      })
       .finally(() => setIsLoading(false));
-
-    // Auto-detect location for new registration
-    detectLocation();
   }, []);
 
   const detectLocation = async () => {
@@ -77,6 +77,10 @@ export default function BusinessProfileScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
+        Alert.alert(
+          'Location Permission Denied',
+          'Location access was not granted. Please set your business location by tapping the map.',
+        );
         setIsLocating(false);
         return;
       }
@@ -88,7 +92,10 @@ export default function BusinessProfileScreen() {
       setPinLocation(coords);
       setMapRegion({ ...coords, latitudeDelta: 0.01, longitudeDelta: 0.01 });
     } catch {
-      // Location unavailable; user can set pin manually
+      Alert.alert(
+        'Location Unavailable',
+        'Could not detect your location. Please tap the map to set your business location manually.',
+      );
     } finally {
       setIsLocating(false);
     }
