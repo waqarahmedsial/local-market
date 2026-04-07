@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import globalStyles from "~/styles/globals.css?url";
 
 export const links: LinksFunction = () => [
+  { rel: "icon", href: "/favicon.ico", type: "image/svg+xml" },
   { rel: "stylesheet", href: globalStyles },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
