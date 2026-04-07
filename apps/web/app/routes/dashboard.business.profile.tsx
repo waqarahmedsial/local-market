@@ -4,8 +4,21 @@ import { requireUser } from "~/lib/auth.server";
 import { getSessionTokens } from "~/lib/session.server";
 import axios from "axios";
 import type { Business } from "@local-market/shared";
+import { lazy, Suspense, useState, useEffect } from "react";
+import type { LatLng } from "~/components/MapPicker.client";
+
+const MapPicker = lazy(() => import("~/components/MapPicker.client"));
 
 const API_BASE = process.env.API_URL ?? "http://localhost:3001/api/v1";
+
+export function links() {
+  return [
+    {
+      rel: "stylesheet",
+      href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+    },
+  ];
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request);
@@ -30,6 +43,11 @@ export async function action({ request }: ActionFunctionArgs) {
   const headers = { Authorization: `Bearer ${accessToken}` };
 
   if (intent === "create") {
+    const lat = parseFloat(formData.get("latitude") as string);
+    const lng = parseFloat(formData.get("longitude") as string);
+    if (isNaN(lat) || isNaN(lng)) {
+      return json({ error: "Please select your business location on the map." });
+    }
     try {
       await axios.post(
         `${API_BASE}/businesses`,
@@ -39,6 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
           address: formData.get("address"),
           city: formData.get("city"),
           phone: formData.get("phone"),
+          location: { latitude: lat, longitude: lng },
         },
         { headers },
       );
@@ -56,6 +75,23 @@ export default function BusinessProfilePage() {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+
+  const DEFAULT_LOCATION: LatLng = { lat: 31.5204, lng: 74.3587 }; // Lahore, Pakistan
+  const [location, setLocation] = useState<LatLng | null>(null);
+  const [locationError, setLocationError] = useState(false);
+
+  // Try to get the user's current position as the default pin
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => setLocation(DEFAULT_LOCATION),
+        { timeout: 5000 },
+      );
+    } else {
+      setLocation(DEFAULT_LOCATION);
+    }
+  }, []);
 
   if (business) {
     return (
@@ -81,6 +117,22 @@ export default function BusinessProfilePage() {
               <p className="text-xs font-medium text-gray-400 uppercase">Phone</p>
               <p className="text-gray-600">{business.phone}</p>
             </div>
+            {business.location && (
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase">Location</p>
+                <p className="text-gray-600 text-sm">
+                  {business.location.latitude.toFixed(5)}, {business.location.longitude.toFixed(5)}
+                </p>
+                <Suspense fallback={<div className="h-[300px] rounded-lg bg-gray-100 animate-pulse mt-2" />}>
+                  <div className="mt-2 overflow-hidden rounded-lg border border-gray-200">
+                    <MapPicker
+                      value={{ lat: business.location.latitude, lng: business.location.longitude }}
+                      onChange={() => {}}
+                    />
+                  </div>
+                </Suspense>
+              </div>
+            )}
             <div>
               <p className="text-xs font-medium text-gray-400 uppercase">Status</p>
               <span className={`badge ${business.status === "APPROVED" ? "badge-green" : business.status === "PENDING" ? "badge-yellow" : "badge-red"}`}>
@@ -98,6 +150,13 @@ export default function BusinessProfilePage() {
     );
   }
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    if (!location) {
+      e.preventDefault();
+      setLocationError(true);
+    }
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-2">Register Your Business</h1>
@@ -110,8 +169,14 @@ export default function BusinessProfilePage() {
           </div>
         )}
 
-        <Form method="post" className="space-y-4">
+        <Form method="post" className="space-y-4" onSubmit={handleSubmit}>
           <input type="hidden" name="intent" value="create" />
+          {location && (
+            <>
+              <input type="hidden" name="latitude" value={location.lat} />
+              <input type="hidden" name="longitude" value={location.lng} />
+            </>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
@@ -132,6 +197,44 @@ export default function BusinessProfilePage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
             <input name="phone" type="tel" required className="input" placeholder="+92 300 1234567" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Location <span className="text-red-500">*</span>
+            </label>
+            <p className="text-xs text-gray-500 mb-2">
+              Drag the pin or click on the map to set your exact business location.
+            </p>
+            {location ? (
+              <Suspense
+                fallback={
+                  <div className="h-[300px] rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+                    Loading map…
+                  </div>
+                }
+              >
+                <div className="overflow-hidden rounded-lg border border-gray-200">
+                  <MapPicker
+                    value={location}
+                    onChange={(pos) => {
+                      setLocation(pos);
+                      setLocationError(false);
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-1">
+                  📍 {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
+                </p>
+              </Suspense>
+            ) : (
+              <div className="h-[300px] rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+                Detecting your location…
+              </div>
+            )}
+            {locationError && (
+              <p className="text-xs text-red-600 mt-1">Please wait for the map to load and select a location.</p>
+            )}
           </div>
 
           <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
