@@ -28,11 +28,11 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Local Market — Village Marketplace</title>
+        <title>Majra Marketplace — Village Marketplace</title>
         <Meta />
         <Links />
       </head>
-      <body className="h-full font-sans">
+      <body className="h-full font-sans" suppressHydrationWarning>
         <Outlet />
         <ScrollRestoration />
         <script

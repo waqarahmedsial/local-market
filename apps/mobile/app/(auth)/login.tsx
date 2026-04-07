@@ -48,7 +48,7 @@ export default function LoginScreen() {
           {/* Header */}
           <View className="items-center mb-10">
             <Text className="text-5xl mb-2">🌍</Text>
-            <Text className="text-3xl font-bold text-green-700">Local Market</Text>
+            <Text className="text-3xl font-bold text-green-700">Majra Marketplace</Text>
             <Text className="text-gray-500 mt-1">Sign in to your account</Text>
           </View>
 

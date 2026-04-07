@@ -19,7 +19,7 @@ export default function DashboardLayout() {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-100 flex flex-col">
         <div className="p-5 border-b border-gray-100">
-          <Link to="/" className="text-xl font-bold text-brand-700">🌍 Local Market</Link>
+          <Link to="/" className="text-xl font-bold text-brand-700">🌍 Majra Marketplace</Link>
           <div className="mt-2">
             <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
             <span className={`badge mt-1 ${roleBadgeClass(user.role as UserRole)}`}>

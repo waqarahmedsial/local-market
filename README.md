@@ -1,4 +1,4 @@
-# 🌍 Local Market — Village Marketplace
+# 🌍 Majra Marketplace — Village Marketplace
 
 > Hyperlocal, influencer-driven marketplace with AI-powered multilingual inventory management.
 

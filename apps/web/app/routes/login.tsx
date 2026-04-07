@@ -42,7 +42,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-brand-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-brand-700">🌍 Local Market</Link>
+          <Link to="/" className="text-3xl font-bold text-brand-700">🌍 Majra Marketplace</Link>
           <p className="text-gray-500 mt-2">Sign in to your account</p>
         </div>
 

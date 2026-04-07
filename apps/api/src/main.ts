@@ -31,7 +31,7 @@ async function bootstrap() {
 
   // Swagger docs
   const config = new DocumentBuilder()
-    .setTitle('Local Market API')
+    .setTitle('Majra Marketplace API')
     .setDescription('Village Marketplace — hyperlocal, influencer-driven marketplace')
     .setVersion('1.0')
     .addBearerAuth()
