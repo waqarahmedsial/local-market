@@ -8,7 +8,7 @@ import type { PaginatedResponse, Item, Business } from "@local-market/shared";
 const API_BASE = process.env.API_URL ?? "http://localhost:3001/api/v1";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await requireUser(request);
+  await requireUser(request);
   const { accessToken } = await getSessionTokens(request);
   const headers = { Authorization: `Bearer ${accessToken}` };
 
@@ -30,7 +30,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // no business yet
   }
 
-  return json({ user, business, items });
+  return json({ business, items });
 }
 
 export default function BusinessInventoryPage() {
