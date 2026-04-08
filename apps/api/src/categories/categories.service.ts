@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category, CategoryDocument } from './category.schema';
@@ -21,5 +21,16 @@ export class CategoriesService {
     const slug = dto.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     const cat = new this.categoryModel({ ...dto, slug });
     return cat.save();
+  }
+
+  async delete(id: string): Promise<void> {
+    const cat = await this.findById(id);
+    const childCount = await this.categoryModel.countDocuments({ parentId: cat._id }).exec();
+    if (childCount > 0) {
+      throw new BadRequestException(
+        'Cannot delete a category that has sub-categories. Remove or reassign them first.',
+      );
+    }
+    await cat.deleteOne();
   }
 }

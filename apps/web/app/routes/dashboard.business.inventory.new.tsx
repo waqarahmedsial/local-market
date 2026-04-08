@@ -3,6 +3,7 @@ import { Form, Link, useActionData, useLoaderData, useNavigation } from "@remix-
 import { requireUser } from "~/lib/auth.server";
 import { getSessionTokens } from "~/lib/session.server";
 import axios from "axios";
+import type { Category } from "@local-market/shared";
 
 const API_BASE = process.env.API_URL ?? "http://localhost:3001/api/v1";
 
@@ -11,6 +12,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { accessToken } = await getSessionTokens(request);
 
   let businessId: string | null = null;
+  let categories: Category[] = [];
+
   try {
     const { data } = await axios.get<{ data: { _id: string } }>(
       `${API_BASE}/businesses/my`,
@@ -25,7 +28,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return redirect("/dashboard/business/profile");
   }
 
-  return json({ businessId });
+  try {
+    const catRes = await axios.get<{ data: Category[] }>(`${API_BASE}/categories`);
+    categories = catRes.data.data;
+  } catch {
+    // categories are optional
+  }
+
+  return json({ businessId, categories });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -57,7 +67,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function NewInventoryItemPage() {
-  const { businessId } = useLoaderData<typeof loader>();
+  const { businessId, categories } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -98,6 +108,23 @@ export default function NewInventoryItemPage() {
               Enter in any language — Urdu, Hindi, Roman Urdu, or English.
             </p>
           </div>
+
+          {categories.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <select name="categoryHint" className="input">
+                <option value="">— Select a category (optional) —</option>
+                {categories.map((cat: Category) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-400 mt-1">
+                Helps customers find your product. The AI will auto-classify as well.
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -158,3 +185,4 @@ export default function NewInventoryItemPage() {
     </div>
   );
 }
+
