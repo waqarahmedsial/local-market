@@ -22,4 +22,9 @@ export class CategoriesService {
     const cat = new this.categoryModel({ ...dto, slug });
     return cat.save();
   }
+
+  async delete(id: string): Promise<void> {
+    const cat = await this.findById(id);
+    await cat.deleteOne();
+  }
 }
